@@ -1,6 +1,6 @@
-# SDLC 11 giai đoạn — Production-Ready Web App
+# SDLC — 11 giai đoạn cho Web App production-grade
 
-> **Version:** 1.0 · **Cập nhật:** 2026-10-31 · **Loại:** Reusable checklist / standard template  
+> **Version:** 1.1 · **Cập nhật:** 2026-10-31 · **Loại:** Reusable checklist / standard template  
 > **Phạm vi:** Web app phức tạp, triển khai thực tế, có thể mở rộng cho AI-native apps.  
 > **Tính chất:** Khung thực hành nội bộ tham chiếu các chuẩn quốc tế, **không phải** bản sao tiêu chuẩn ISO hay chứng nhận tuân thủ.
 
@@ -243,6 +243,8 @@
 6. **DECISIONS / RISKS:** Trade-offs, exceptions, risk acceptance, closure.
 
 Không yêu cầu tách file theo từng giai đoạn. Mục tiêu là **đủ thông tin để xây, kiểm chứng, phát hành, vận hành và bàn giao một cách đáng tin cậy**.
+
+Đây là **6 vai trò thông tin**, không phải 6 file bắt buộc. Giữ một source of truth cho mỗi vai trò; CI/tracker/release record là nguồn bằng chứng hợp lệ. Xem [REPOSITORY.md](REPOSITORY.md) về ownership/naming và [TASKS.md](TASKS.md) về task/effort. **ECC sở hữu HOW**, không sao chép skills/rules/workflows từ ECC vào repo này.
 
 ## G. Nguồn tham chiếu chính thức
 
