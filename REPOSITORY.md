@@ -53,3 +53,29 @@ Nếu không đạt, dùng issue/PR/commit/CI/artifact store sẵn có. **Không
 **Trong review:** file trùng, mồ côi, stale, không owner hoặc tạo để báo cáo tình trạng nhất thời → gộp/xóa, giữ lịch sử trong Git.
 
 Không áp đặt “đúng X file” cho mọi target; chuẩn là **ít nguồn sự thật nhất nhưng vẫn đủ correctness, security, vận hành, traceability**.
+
+## 6. Knowledge base: curation, lifecycle và feature ownership
+
+**Mục tiêu:** một người/agent mở đúng tài liệu cần thiết trong vài lần điều hướng; không đọc cả kho history hoặc tài liệu nghiên cứu để hiểu một feature.
+
+| Lớp | Sở hữu | Trạng thái / vị trí gợi ý |
+| --- | --- | --- |
+| **Canonical (normative)** | Những fact và quyết định hiện đang áp dụng cho target: spec, contracts, invariants, runbooks | Đặt ở source hiện hữu; một owner, có link từ README/index |
+| **Research (informative)** | Lựa chọn và bằng chứng còn có thể thay đổi, chưa chắc áp dụng | Một thư mục `research/` **chỉ khi đã có nhu cầu tra cứu nhiều chủ đề**; xem [research/README.md](research/README.md) |
+| **Evidence/history** | Test outputs, CI, incidents, decision history | CI/tracker/monitoring/Git; **không chép lại** thành report Markdown |
+| **Scratch** | Chat transcript, draft, benchmark chưa kiểm chứng, tạm lưu | Ngoài repository; không commit |
+
+**Không có quy tắc bắt buộc mỗi feature một docs file**. Khi feature đủ phức tạp mới cần một canonical feature spec; mặc định hợp nhất business rules, API contracts, acceptance, owners trong spec/issue hiện có. Nếu target có nhiều feature specs, gợi ý `docs/features/<feature-slug>.md` (một file per **domain capability**, không per component, endpoint, task hay sprint). Tài liệu feature chỉ chứa intent, business invariants, external contracts, acceptance/risks và link tới tests/code — ECC sở hữu kỹ thuật triển khai.
+
+**Admission gate (phải đạt cả 5):**
+1. Câu hỏi hoặc quyết định nào đang thiếu nguồn thật? Người đọc là ai?
+2. Có thể **sửa hoặc link** nguồn cũ thay vì tạo bản mới không?
+3. Fact hay nhận định? Nguồn gốc + ngày kiểm chứng + mức bất định?
+4. Owner chịu trách nhiệm; khi code/contract thay đổi, tài liệu nào phải sửa?
+5. Nếu research: trigger tái kiểm chứng và hành động `PROMOTE → UPDATE → DELETE` là gì?
+
+**Sau khi có câu trả lời:** promote kết luận được chấp nhận vào canonical owner/ADR, giữ link nguồn cần thiết; remove bản nghiên cứu không còn giá trị, Git giữ lịch sử. Không tạo `archive/`, `deprecated/` hay `v2-final/` chỉ để tích trữ. Tài liệu nào **không còn chủ sở hữu, không còn đọc hoặc chỉ trùng nội dung code/tests** thì gộp/xóa trong cùng change; không dựa duy nhất vào ngày cũ để xóa khi nội dung vẫn còn chính xác.
+
+**Change-impact check:** Khi thay đổi feature, kiểm tra spec/contract/ADRs/runbook nào có assertion bị ảnh hưởng; cập nhật **cùng commit** nếu có drift. Status và các câu chưa giải quyết thuộc **một tracker**, không duplicate bảng status ở Markdown. Chỉ kiểm audit/link theo scope thay đổi; không cần hệ thống docs governance chạy nền.
+
+**Boundary với ECC docs-governance:** ECC có artifact-role contract, kỹ thuật audit và router. Standard này chỉ quy định **tiêu chí vào/ra của tri thức**, không cài lại ECC scripts, map/status/history files hay tự nhân bản `CONTEXT.md`/`TESTS.md`.

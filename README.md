@@ -6,9 +6,10 @@ Chuẩn **WHAT / WHEN / DONE** tối giản cho web app phức tạp: 11 giai đ
 | --- | --- |
 | [SDLC.md](SDLC.md) | Phase, checklist, deliverables, quality gates, 8 trục |
 | [REPOSITORY.md](REPOSITORY.md) | Ownership, docs structure, naming, chống trùng lặp với ECC |
-| [TASKS.md](TASKS.md) | Định nghĩa task, sizing, effort, ChatGPT/Codex routing, verification |
+| [TASKS.md](TASKS.md) | Định nghĩa task, sizing, effort, ChatGPT Architect / Luna Executor, verification |
+| [research/README.md](research/README.md) | Index nghiên cứu có chọn lọc về infra, third-party, technology/feature-based selection |
 
-**Chỉ 4 Markdown tại root** (kể cả README); không thêm agent/skills/rules/commands/scripts/CI. Git là lịch sử; không lưu bản sao report/state theo từng turn.
+**4 Markdown canonical ở root + 1 thư mục `research/` được curate**; không thêm agent/skills/rules/commands/scripts/CI. Research là tham chiếu cho quyết định, **không là quy tắc bắt buộc** của target. Git là lịch sử; không lưu bản sao report/state theo từng turn.
 
 ## Sử dụng với target repo
 
@@ -20,4 +21,4 @@ Chuẩn **WHAT / WHEN / DONE** tối giản cho web app phức tạp: 11 giai đ
 
 Target repo sở hữu **business facts, code, contracts, tests, release decisions**. Chuẩn này chỉ đặt kỳ vọng về kết quả/gates; không có quyền ghi code hay phê duyệt release. Giữ một nguồn sự thật mỗi chủ đề.
 
-**v1.1 · 2026-10-31**
+**v1.2 · 2026-10-31**
