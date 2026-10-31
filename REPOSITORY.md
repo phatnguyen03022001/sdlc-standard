@@ -79,3 +79,14 @@ Không áp đặt “đúng X file” cho mọi target; chuẩn là **ít nguồ
 **Change-impact check:** Khi thay đổi feature, kiểm tra spec/contract/ADRs/runbook nào có assertion bị ảnh hưởng; cập nhật **cùng commit** nếu có drift. Status và các câu chưa giải quyết thuộc **một tracker**, không duplicate bảng status ở Markdown. Chỉ kiểm audit/link theo scope thay đổi; không cần hệ thống docs governance chạy nền.
 
 **Boundary với ECC docs-governance:** ECC có artifact-role contract, kỹ thuật audit và router. Standard này chỉ quy định **tiêu chí vào/ra của tri thức**, không cài lại ECC scripts, map/status/history files hay tự nhân bản `CONTEXT.md`/`TESTS.md`.
+
+## 7. Code ownership, shared reuse và consumer contracts
+
+**Áp dụng ở target repo, không áp đặt cấu trúc thư mục:** Ưu tiên colocate code trong feature sở hữu hành vi. Chỉ đưa logic vào shared khi các consumers thật sự dùng **cùng semantics/invariants**, có contract rõ và việc dùng chung giảm chi phí thay đổi; hai đoạn code giống nhau hoặc dự đoán sẽ tái sử dụng chưa đủ để extract. Với nhiều consumer nhưng khác business rules, giữ riêng.
+
+- **Owner:** Mỗi shared module có một owner logic (feature/platform phù hợp), contract đầu vào/đầu ra, lỗi và các invariants cần giữ. Tránh `utils`/shared "god module", circular dependencies, hoặc chia sẻ internals giữa các feature.
+- **API tối thiểu:** Chỉ export phần consumers cần. Giữ boundary ổn định; không thêm generic abstraction, interface, package hay dependency chỉ để "future-proof". Shared có một consumer vẫn hợp lệ khi mang tính nền tảng thật sự, không lập luật cứng "phải có ≥2 consumers".
+- **Trước khi thay đổi shared:** Xác định direct/transitive consumers, cả các đường gọi gián tiếp (config, DI, runtime routing), và hành vi/contract bị ảnh hưởng. Nếu không xác định đủ dependency, **mở rộng phạm vi kiểm thử** thay vì mặc định an toàn.
+- **Sau khi thay đổi:** Kiểm tra contract + consumer regression theo [SDLC.md](SDLC.md); ghi bằng chứng và rủi ro còn lại theo [TASKS.md](TASKS.md). Nếu module không còn owner/consumer, đơn giản hóa hoặc đưa về feature khi phù hợp.
+
+Đây là tiêu chí **ownership và outcome**; ECC/target tooling sở hữu phương pháp refactor, dependency analysis và chạy test thực tế.

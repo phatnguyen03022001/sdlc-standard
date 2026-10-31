@@ -96,6 +96,7 @@
 
 - [ ] Repo, local development setup, conventions và môi trường chạy được.
 - [ ] FE/BE theo module boundaries, API contracts và naming nhất quán.
+- [ ] Code dùng chung chỉ được extract khi có cùng semantics/contract và owner rõ; bảo toàn consumers khi sửa shared (xem [REPOSITORY.md](REPOSITORY.md)).
 - [ ] DB migrations có kiểm thử, giữ data integrity; **expand-and-contract/backward-compatible** khi cần zero-downtime hoặc rolling/canary.
 - [ ] AuthN/AuthZ, server-side validation, rate limiting **khi có bề mặt abuse**.
 - [ ] Error handling, retries có giới hạn, timeouts và idempotency cho thao tác dễ bị lặp.
@@ -115,12 +116,24 @@
 - [ ] Integration tests: DB, API, external services, contract tests.
 - [ ] E2E tests cho critical user journeys, không lạm dụng E2E.
 - [ ] Regression tests cho bug đã sửa và tính năng bị ảnh hưởng.
+- [ ] Truy vết changed surface → direct/transitive consumers → test phù hợp; **không** mặc định mọi thay đổi đều chạy E2E toàn hệ thống và **không** bỏ qua consumer không xác định.
 - [ ] Security checks: authz bypass, injection, OWASP risks, dependency vulnerabilities.
 - [ ] Performance/load testing theo NFR và quy mô thực tế.
 - [ ] Accessibility, responsive, cross-browser/device checks.
 - [ ] Test data management: synthetic seeding, masking/anonymization khi dùng dữ liệu thật; **không đưa PII/secrets production vào test mặc định**.
 - [ ] Failure/recovery tests: timeouts, retry, duplicate delivery, backup restore (khi áp dụng).
 - [ ] Defect triage, severity, regression evidence, quality report.
+
+**Chọn test theo blast radius (WHAT / minimum evidence; ECC sở hữu HOW):**
+
+| Changed surface | Phạm vi kiểm chứng tối thiểu |
+| --- | --- |
+| Private helper/logic cô lập | Targeted unit/regression tests + static checks phù hợp |
+| Shared function/module | Unit/contract tests của shared **và** regression của direct/transitive consumers bị ảnh hưởng |
+| API/schema/event/shared contract | Contract + integration tests qua các consumer boundaries; kiểm backward compatibility khi có phiên bản đồng thời |
+| AuthZ, thanh toán, dữ liệu/migration, global config/runtime | Security/data integrity/failure-path tests + critical integration/E2E hoặc build checks theo rủi ro |
+
+**Ba lớp kiểm chứng:** (1) vòng sửa nhanh: targeted tests + static checks; (2) gate DONE: affected contract/integration/regression và evidence; (3) release/CI: broader regression suite, critical user journeys và checks theo release risk. **Không chạy full E2E sau từng edit**, nhưng phải chạy suite rộng hơn khi thay đổi có blast radius lớn, dependency graph không đáng tin (dynamic import/DI/config/runtime side effect), thiếu tests cho consumer, hoặc release gate đòi hỏi. Test selection chỉ tối ưu phản hồi, **không chứng minh không có regression** nếu mapping thiếu; không ghi PASS khi thiếu evidence bắt buộc. Xem [TASKS.md](TASKS.md) cho kết quả cần báo cáo.
 
 **Deliverables:** Test results, defect list, coverage theo rủi ro, QA summary.  
 **Gate 7 — PASS khi:** Critical paths đã kiểm thử; không còn blocker/critical defect chưa chấp nhận rủi ro hợp lệ.

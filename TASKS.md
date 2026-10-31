@@ -12,9 +12,9 @@ Target & baseline: [repo, branch/commit, môi trường xác nhận được]
 Scope & non-goals: [giới hạn; cái gì không đổi]
 Acceptance: [tiêu chí test/đo được]
 Constraints: [data/privacy/security/compatibility/permission]
-Verification: [checks, evidence links, N/A có lý do]
+Verification: [affected tests/gates, evidence links; N/A có lý do]
 Risk / rollback: [khi có tác động dữ liệu/production]
-Result: PASS | FAIL | NOT VERIFIED + evidence + blockers
+Result: PASS | FAIL | NOT VERIFIED + changed surface / consumers / executed checks / residual risk
 ```
 
 Có thể **link sang issue/spec** thay cho lặp thông tin. Không ép viết đủ trường cho thay đổi cơ học. Ưu tiên vertical slice hoàn chỉnh (FE+BE+DB+test cần thiết cho cùng một hành vi) thay vì chia cơ học theo layer. Nếu chưa biết root cause/contract thì làm investigation **read-only** trước, không giả sử đã implement.
@@ -63,9 +63,11 @@ Khối lượng triển khai/review/rollout (**task effort**) khác tài nguyên
 ## 5. Gates cho task
 
 1. **READY:** scope, baseline, owner/authority, acceptance và dependencies đủ rõ; khi thiếu làm investigation có giới hạn.
-2. **VERIFY:** test đúng failure mode, regression, security/compatibility khi liên quan. Không có tool/evidence = **NOT VERIFIED**.
+2. **VERIFY:** test đúng failure mode, regression, security/compatibility khi liên quan. Với shared/contract change, kiểm affected consumers theo [SDLC.md](SDLC.md); khi mapping không đủ, chạy broader checks hoặc báo NOT VERIFIED. Không có tool/evidence = **NOT VERIFIED**.
 3. **DONE:** evidence gắn với thay đổi, diff trong scope, không còn blocker nghiêm trọng. Không đồng nhất “tests green” với sản phẩm đúng nghiệp vụ.
 4. **RELEASE:** production chỉ qua pre-release UAT/sign-off, migration, smoke/monitor/rollback như [SDLC.md](SDLC.md); DONE không tự động là DEPLOYED.
+
+**Change-impact evidence tối thiểu khi báo DONE:** `changed surface → affected consumers (kể cả transitive/indirect) → checks executed + result/link → skipped checks + rationale → residual risk`. Với thay đổi đơn giản, một dòng đủ; không sinh report Markdown riêng. Task chọn mức kiểm chứng theo blast radius, không lấy số file sửa làm chuẩn. **NOT VERIFIED không được diễn giải thành PASS**; test xanh nhưng scope sai/thiếu consumer vẫn chưa đủ evidence.
 
 ## 6. Nguồn chính thức (kiểm lại trước khi cố định routing)
 
