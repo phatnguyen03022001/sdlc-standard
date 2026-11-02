@@ -40,23 +40,15 @@ Trước **material planning/architecture** hoặc handoff đáng kể, Architec
 
 ## 2. Handoff tối thiểu
 
-Giao **một outcome**, không giao “fix all” hoặc danh sách thay đổi tùy tiện. Có thể dẫn link đến spec/issue thay vì lặp lại:
+**Task nhỏ, rõ và thực hiện trong cùng phiên không cần handoff riêng.** Khi thực sự bàn giao, giao **một outcome** qua ba nhóm thông tin logic, không bắt buộc template hoặc file:
 
-~~~md
-Outcome: [hành vi hoặc kết quả đo được]
-Target: [owner/repo, branch, baseline commit, local root nếu thực thi]
-Scope / non-goals: [boundary, các phần không được đổi]
-Authority: [READ | EDIT | COMMIT | PUSH | RELEASE; quyền nào được operator cấp riêng]
-Governance: [nguồn áp dụng + revision/content identity khi cần cross-session binding]
-Material decision: [target owner/reference + RESOLVED | UNRESOLVED | N/A, khi material]
-Acceptance: [testable business/contract invariants + failure paths]
-Verify: [target-native commands/checks, affected consumers, expected evidence]
-Risks: [security/data/compatibility, rollback khi liên quan]
-ECC HOW: [skill cần dùng + source/revision đã kiểm chứng, hoặc N/A]
-Stop/escalate: [blocker thực sự, điều kiện dừng]
-~~~
+- **Goal:** target cụ thể (owner/repo, branch, local root nếu thực thi), outcome và acceptance có thể kiểm chứng.
+- **Boundary:** scope, non-goals và quyền operator cấp riêng cho từng hành động (`READ | EDIT | COMMIT | PUSH | RELEASE`); capability/ECC không tự cấp quyền.
+- **Proof:** cách verify, evidence cần thu thập, các failure paths liên quan và điều kiện stop/escalate.
 
-Không bắt buộc metadata `Governance`/`Material decision` cho task thường đã rõ, không cần binding qua phiên hoặc quyết định material. Khi cần, xác minh governing source thật sự áp dụng cho target (reference repo không tự thành authority), và pin nội dung có thể truy xuất: commit SHA chỉ định danh phần đã commit, còn thay đổi local phải có content/diff identity riêng; nguồn stale/không truy xuất được → rebind hoặc NOT VERIFIED. `UNRESOLVED` không được ghi thành `N/A` để vượt gate. Không cần tạo file task/report cho handoff: gửi trong chat hoặc cập nhật **tracker hiện có**. Viết acceptance quan sát được: **điều kiện → thao tác → kết quả + điều không được xảy ra → cách chứng minh**. Khi chưa biết nguyên nhân, investigation có giới hạn trước mutation. Giao một vertical slice kiểm được; không chia FE/BE/DB theo vai trò nếu một thay đổi nguyên tử có thể hoàn tất an toàn. Nếu quyết định đổi architecture/business scope là material, Architect phải đánh giá lại trước khi executor mở rộng phạm vi.
+Có thể trỏ tới spec/issue và instructions đã có thay vì chép lại. **Chỉ bổ sung khi liên quan:** exact baseline/candidate; material architecture decision và owner; governing source/revision cho handoff qua phiên; security/data migration; direct/transitive affected consumers; rollback/recovery; release permission; mandatory independent review; hoặc original operation identity/postcondition khi outcome chưa rõ. Không lược bỏ thông tin critical để vừa ba nhóm; việc bàn giao không thay thế authority hay [Git synchronization](#git-synchronization--canonical-execution-contract).
+
+**Binding và acceptance:** nếu cần pin governance qua phiên, xác minh nguồn thực sự áp dụng; commit SHA không định danh thay đổi local chưa commit, cần content/diff identity tương ứng. Nguồn stale/không kiểm được → rebind hoặc `NOT VERIFIED`; quyết định material `UNRESOLVED` không được đổi thành `N/A`. Acceptance mô tả **điều kiện → thao tác → kết quả, điều không được xảy ra → cách chứng minh**. Khi root cause chưa rõ, điều tra có giới hạn trước mutation. Giao một vertical slice đủ kiểm chứng, không mặc định chia FE/BE/DB; Architect phải xem lại quyết định material trước khi mở rộng business/architecture scope.
 
 ### Material-design-readiness — chỉ bật khi code phụ thuộc quyết định quan trọng
 
@@ -164,17 +156,15 @@ Không thêm abstraction/dependency/infrastructure chỉ vì ECC có skill. Dùn
 
 **Independent review chỉ khi bắt buộc:** `Reviewer / Candidate / Evidence / Decision`. Reviewer phải độc lập thật nếu policy đòi hỏi; nhãn hoặc metadata không chứng minh independence. Đánh giá đúng candidate và evidence có thể kiểm; thiếu mandatory independent evidence → gate **không PASS**. Self-review chỉ là internal check.
 
-Báo gọn trong chat hoặc tracker có sẵn:
+**Báo kết quả theo rủi ro trong chat hoặc tracker có sẵn**, bằng các nhóm thông tin logic (không bắt buộc format):
 
-~~~md
-Result: PASS | FAIL | NOT VERIFIED
-Target / candidate: [repo/branch, exact commit hoặc dirty candidate identity]
-Changed: [files/surface và consumers]
-Evidence: [candidate + commands/profile, observed result, material inputs/toolchain]
-Skipped: [checks + lý do, không gán PASS]
-Risks / blockers: [còn lại]
-Git: [uncommitted | VERIFIED | COMMITTED_LOCAL | PUBLISHED | SYNCED_CLEAN | PARTIAL | BLOCKED; local/remote SHA + clean evidence khi publication]
-~~~
+- **Result:** `PASS | FAIL | NOT VERIFIED`, tương ứng acceptance đã thực sự chứng minh.
+- **Changed:** phần thay đổi và affected consumers khi có.
+- **Evidence:** candidate đã kiểm, checks/profile, kết quả quan sát được và điều kiện kiểm chứng liên quan.
+- **Remaining issues:** checks chưa chạy/lý do, unknowns, risks và material blockers khi có.
+- **Git publication state:** tình trạng commit/push/sync thực tế khi liên quan; dùng đúng các trạng thái đã định nghĩa tại [Git synchronization](#git-synchronization--canonical-execution-contract).
+
+Với task đọc hoặc thay đổi nhỏ không publication, bỏ các nhóm không liên quan. Với công việc consequential, **phải giữ exact candidate identity**, evidence gắn với candidate/environment/inputs, skipped checks và material blockers; bổ sung reviewer độc lập, release/rollback hoặc unknown-effect status khi liên quan. `PASS` đòi hỏi acceptance evidence thật; `PUBLISHED` không suy ra `SYNCED_CLEAN`, và `DONE` không suy ra deployment.
 
 **Adversarial check gọn trước khi kết luận:** (a) AC nào vẫn sai dù tests xanh? (b) tác động tới consumer/config/permission gián tiếp nào chưa kiểm? (c) state/remote/test output nào có thể stale? (d) failure, rollback, data leakage hoặc unauthorized change nào có thể xảy ra? (e) thao tác nào vẫn UNKNOWN? Chỉ mở rộng kiểm tra khi có failure mode cụ thể; không giả vờ đã có independent reviewer.
 
