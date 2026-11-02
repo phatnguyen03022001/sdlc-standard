@@ -111,7 +111,7 @@ Phân định model/evals, transformations và I/O boundaries; dùng typed valid
 - Chọn một feature đại diện và 2 phương án tối đa; lập spike giới hạn, benchmark trên input giống prod; kiểm correctness trước perf.
 - Verify deployment limitations của provider, data boundaries, failure handling, migrations/restore và developer ergonomics.
 - Viết **target-owned ADR** nếu quyết định ảnh hưởng lâu dài; nếu giữ nguyên stack, chỉ ghi trong issue/plan.
-- Giao task vertical slice nhỏ cho **Luna executor**, ChatGPT architect kiểm review theo risk; ECC HOW.
+- Giao task vertical slice nhỏ cho **ChatGPT khi có execution tools phù hợp** hoặc **Codex khi có quyền workspace cần thiết**, lựa chọn theo capability/authority trong [TASKS.md](../TASKS.md); review theo risk, ECC HOW.
 
 ## Sources (primary)
 

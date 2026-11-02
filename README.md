@@ -1,24 +1,22 @@
-# SDLC Standard
+# SDLC Standard — Agent-ready Mini
 
-Chuẩn **WHAT / WHEN / DONE** tối giản cho web app phức tạp: 11 giai đoạn, 8 trục xuyên suốt và quality gates có bằng chứng. Không phải chứng nhận ISO, framework thực thi hoặc generator.
+Chuẩn Markdown gọn cho phát triển sản phẩm với **ChatGPT Architect → ChatGPT hoặc Codex Executor**. Kết hợp vòng đời SDLC, quyền thực thi an toàn và ECC chuyên trách **HOW**; không phải agent runtime, bộ cài, chứng nhận ISO hay cơ chế tự động cấp quyền.
 
-| Tài liệu chính thức | Chủ sở hữu nội dung |
+| Nguồn duy nhất | Sở hữu |
 | --- | --- |
-| [SDLC.md](SDLC.md) | Phase, checklist, deliverables, quality gates, 8 trục |
-| [REPOSITORY.md](REPOSITORY.md) | Ownership, docs structure, naming, chống trùng lặp với ECC |
-| [TASKS.md](TASKS.md) | Định nghĩa task, sizing, effort, ChatGPT Architect / Luna Executor, verification |
-| [research/README.md](research/README.md) | Index nghiên cứu có chọn lọc về infra, third-party, technology/feature-based selection |
+| [SDLC.md](SDLC.md) | 11 nhóm lifecycle, 8 trục chất lượng, quality/release gates |
+| [TASKS.md](TASKS.md) | ChatGPT Architect → ChatGPT/Codex, capability routing, material design gate, handoff, authority, continuity, ECC HOW |
+| [REPOSITORY.md](REPOSITORY.md) | Ownership, tài liệu tối thiểu, chống rác/drift |
+| [research/README.md](research/README.md) | Nghiên cứu tham khảo, không tự thành quyết định áp dụng |
 
-**4 Markdown canonical ở root + 1 thư mục `research/` được curate**; không thêm agent/skills/rules/commands/scripts/CI. Research là tham chiếu cho quyết định, **không là quy tắc bắt buộc** của target. Git là lịch sử; không lưu bản sao report/state theo từng turn.
+## Cách dùng (không cần cài gì)
 
-## Sử dụng với target repo
+1. **Bind target:** xác minh đúng repo/branch/HEAD, instructions và trạng thái local; target sở hữu sự thật sản phẩm.
+2. **Architect:** phân loại intent (READ_ONLY/DESIGN/IMPLEMENT/REVIEW/SECURITY/RELEASE), chọn outcome/gate trong [SDLC.md](SDLC.md), chốt material decisions khi cần, root cause, trade-off, phạm vi nhỏ nhất và acceptance; giao task theo [TASKS.md](TASKS.md).
+3. **Executor:** dùng **ChatGPT nếu phiên có công cụ truy cập/thực thi**, hoặc **Codex** khi cần làm trực tiếp trên workspace. Chỉ nạp context và [ECC](https://github.com/affaan-m/everything-claude-code) skill phù hợp, không cài/copy toàn bộ ECC.
+4. **Verify:** tests theo blast radius, kiểm diff và bằng chứng. Phân biệt kiểm tra bản thân với independent review.
+5. **Publish khi được phép riêng:** chỉnh sửa không tự cấp quyền commit/push/deploy. Không có tool/evidence thì báo **NOT VERIFIED**, không giả PASS.
 
-1. Xác định mục tiêu và gate theo [SDLC.md](SDLC.md), không ép waterfall.
-2. **Kiểm kê tài liệu/tracker có sẵn**, tái sử dụng owner theo [REPOSITORY.md](REPOSITORY.md); không scaffold mặc định.
-3. Giao một outcome có acceptance/evidence theo [TASKS.md](TASKS.md), chọn model & reasoning effort phù hợp.
-4. **ECC = HOW** (coding, testing, review, debugging, workflow). Không fork ECC vào đây. **Agent Foundation nếu có = authority/router/execution boundary**, không phải bắt buộc.
-5. Report PASS/FAIL/NOT VERIFIED theo bằng chứng, không tự chấm chất lượng 10/10.
+**Mặc định:** một task nhỏ, một target, một writer; không bắt buộc hai phiên chat, YAML, scripts, hooks, CI mới, task/report files hoặc nhiều agent. Dùng source of truth sẵn có; Git/issue/CI giữ lịch sử. Foundation bên ngoài là **tùy chọn**, không phải dependency.
 
-Target repo sở hữu **business facts, code, contracts, tests, release decisions**. Chuẩn này chỉ đặt kỳ vọng về kết quả/gates; không có quyền ghi code hay phê duyệt release. Giữ một nguồn sự thật mỗi chủ đề.
-
-**v1.2 · 2026-10-31**
+Bản mini v2.1 · 2026-11-02.
