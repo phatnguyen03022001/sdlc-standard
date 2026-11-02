@@ -8,6 +8,8 @@
 | Third-party | Khi nào mua/dùng dịch vụ ngoài, rủi ro vendor, cost, security và exit? | [third-party.md](third-party.md) |
 | Feature-based & tech selection | Tại sao chọn TypeScript/Next.js, Go, Rust, Python… cho feature thay vì theo trend? | [technology-selection.md](technology-selection.md) |
 
+**Technology Catalog (tham khảo bên ngoài):** [phatnguyen03022001/technology-catalog](https://github.com/phatnguyen03022001/technology-catalog) — tra cứu languages, libraries, frameworks, providers và các so sánh theo workload. Chỉ dùng để lập shortlist; đối chiếu nguồn hiện hành và requirements của target trước khi quyết định, không coi catalog là architecture authority.
+
 **Format chuẩn mỗi nghiên cứu:** `Question → Baseline / recommendation → Alternatives & trade-offs → Decision triggers → Verification plan → Primary sources`.
 
 **Metadata tối thiểu:** `Status: reference / decision-required / superseded`; `Verified: YYYY-MM-DD`; `Scope / assumptions`; `Recheck triggers`. Định nghĩa:
