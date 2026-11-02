@@ -1,6 +1,6 @@
 # Feature-based Architecture & Language / Framework Selection
 
-> **Status:** reference · **Verified:** 2026-10-31 · **Scope:** web product architecture, not a mandate to use multiple languages. **Recheck:** framework/runtime release, production profiling, team skills, deploy topology, security/compliance requirements.  
+> **Status:** reference · **Verified:** 2026-11-02 · **Scope:** web product architecture, not a mandate to use multiple languages. **Recheck:** framework/runtime release, production profiling, team skills, deploy topology, security/compliance requirements.\
 > **Important:** **TypeScript, Go, Rust, Python... are languages; Next.js is a React web framework**, not a substitute for a language.
 
 ## Question / Recommendation
@@ -25,10 +25,10 @@ Không tự mặc định Rust luôn nhanh hơn Go/Node trong mọi tác vụ; I
 | **TypeScript + Node.js** | Chia sẻ types, broad web/SDK ecosystem, full-stack developer velocity | Types bị erase tại runtime; cần runtime validation; CPU-heavy code block event loop nếu thiết kế sai | CRUD/API orchestration, business workflows, integrations, dashboards |
 | **Next.js (React + TS)** | File-based routing, Server Components, built-in rendering, integrated web/BFF patterns | Host-dependent runtime limits, caching/rendering mental model, không là durable job engine | SEO, authenticated app UI, dashboards, user journeys, forms |
 | **Go** | Goroutines, channels, static binaries, tooling/diagnostics, server/network concurrency đơn giản | GC cần profile, type/domain ergonomics tùy team, thêm service tăng ops | High-concurrency API/worker/network service **khi đã có lý do tách** |
-| **Rust** | Ownership/memory safety, kiểm soát allocation, hiệu năng dự đoán hơn cho hot path | Learning/build/borrow-checker complexity, ffi/debug burden | CPU/memory-constrained worker, parser, media processing, native/WASM library được benchmark |
-| **Python** | Mature AI/data/scientific libraries, rapid experiments, orchestration | Dynamic runtime/runtime validation, performance phụ thuộc workload, production packaging | ML inference/tooling, data pipelines, specialized scientific tasks |
-| **Java/Kotlin** | JVM ecosystem, mature backends, observability, transactions | JVM operational complexity, startup/memory tuning ở một số môi trường | Large enterprise/backend ecosystems và team đã có JVM |
-| **C#/.NET** | Mature typed services, enterprise tooling, cross-platform backend | Runtime/ecosystem expertise và infra choices | .NET-centric team, APIs, services, business systems |
+| **Rust** | Ownership/memory safety, kiểm soát allocation; hiệu năng hot path cần benchmark | Learning/build/borrow-checker complexity, ffi/debug burden | CPU/memory-constrained worker, parser, media processing, native/WASM library được benchmark |
+| **Python** | AI/data/scientific libraries (PyTorch, NumPy), orchestration | Type hints không tự validate ở runtime; concurrency/performance phụ thuộc runtime/build, workload và native libraries; cần kiểm packaging | ML inference/tooling, data pipelines, specialized scientific tasks |
+| **Java/Kotlin** | JVM ecosystem, Java interoperability (Kotlin), backend frameworks và JDK diagnostics | Cần kiểm runtime/diagnostics; startup/memory phải đo theo deployment | Large enterprise/backend ecosystems và team đã có JVM |
+| **C#/.NET** | Type-safe runtime, SDK/tooling, cross-platform backend | Runtime/ecosystem expertise và infra choices | .NET-centric team, APIs, services, business systems |
 | **SQL/PostgreSQL** | Constraints/transactions/indexes rất mạnh, consistency | Complex query/planning/tuning, không thay service API/auth | Data integrity, transactional feature, search/filter/aggregations trước khi thêm engine |
 
 **Anti-pattern:** chọn polyglot architecture để “dùng đúng điểm mạnh” trước khi có workload; điều này tạo mới contracts, deployments, monitoring, consistency problems, retraining và chi phí review.
@@ -115,6 +115,8 @@ Phân định model/evals, transformations và I/O boundaries; dùng typed valid
 
 ## Sources (primary)
 
+Các nguồn dưới đây chứng minh capability/runtime semantics; cột phù hợp và trade-off là judgment có điều kiện, không phải xếp hạng hoặc benchmark giữa ngôn ngữ.
+
 - [TypeScript — erased types/runtime semantics](https://www.typescriptlang.org/docs/handbook/typescript-from-scratch)
 - [Next.js — App Router](https://nextjs.org/docs/app)
 - [Next.js — route groups](https://nextjs.org/docs/app/api-reference/file-conventions/route-groups)
@@ -122,3 +124,10 @@ Phân định model/evals, transformations và I/O boundaries; dùng typed valid
 - [Go — Effective Go & concurrency](https://go.dev/doc/effective_go)
 - [Go — GC guide](https://go.dev/doc/gc-guide)
 - [Rust — ownership](https://doc.rust-lang.org/stable/book/ch04-01-what-is-ownership.html)
+- [Node.js — event loop và CPU-bound work](https://nodejs.org/learn/asynchronous-work/dont-block-the-event-loop)
+- Python — [type hints không được runtime enforce](https://docs.python.org/3/library/typing.html) và [threading/GIL, I/O-bound, free-threaded builds](https://docs.python.org/3/library/threading.html).
+- Python ecosystem — [PyTorch: data, model, training/inference](https://docs.pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html) và [NumPy: scientific computing](https://numpy.org/doc/stable/user/whatisnumpy.html).
+- [Java/JDK — monitoring, diagnostics và Flight Recorder](https://dev.java/learn/jvm/monitoring-troubleshooting/).
+- [Kotlin — backend frameworks, Java interoperability và JVM deployment](https://kotlinlang.org/docs/server-overview.html).
+- [.NET — runtime/type safety, SDK/tooling và cross-platform support](https://learn.microsoft.com/en-us/dotnet/core/introduction).
+- PostgreSQL — [constraints](https://www.postgresql.org/docs/current/ddl-constraints.html), [transactions](https://www.postgresql.org/docs/current/tutorial-transactions.html) và [indexes](https://www.postgresql.org/docs/current/indexes.html).

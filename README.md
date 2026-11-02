@@ -19,4 +19,6 @@ Chuẩn Markdown gọn cho phát triển sản phẩm với **ChatGPT Architect 
 
 **Mặc định:** một task nhỏ, một target, một writer; không bắt buộc hai phiên chat, YAML, scripts, hooks, CI mới, task/report files hoặc nhiều agent. Dùng source of truth sẵn có; Git/issue/CI giữ lịch sử. Foundation bên ngoài là **tùy chọn**, không phải dependency.
 
+**Status: STABLE / FROZEN BASELINE.** Đóng chương trình simplification; chỉ thay đổi khi có lỗi correctness/safety P0/P1 đã chứng minh, thay đổi material của platform/tool áp dụng, contract/reference thiết yếu bị hỏng, yêu cầu security/compatibility material hoặc tiến hóa kiến trúc có lý do. Mọi thay đổi cần authorization rõ ràng của owner theo [TASKS.md](TASKS.md); freeze là quyết định bảo trì, không cấm sửa lỗi cần thiết và không mở lại vì style, suy đoán hay giảm Markdown.
+
 Bản mini v2.1 · 2026-11-02.
