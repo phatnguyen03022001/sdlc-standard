@@ -34,9 +34,15 @@ Không thêm YAML task/report/review, scripts, hooks, prompts catalog, skill mir
 | Entry/setup | README/conventions hiện có |
 | Requirements/acceptance | Existing PRD/spec/issue |
 | Architecture/decisions | Code + API/schema + ADR *khi có trade-off lâu dài* |
-| Work status/priority | **Một** issue tracker/backlog |
+| Work status/priority | **Một** tracker/backlog/roadmap/status owner hiện có phù hợp |
 | Test/verification | Tests, CI, observed command output |
 | Release/operations | Existing deployment records, dashboard, runbook |
+
+**Current product progress — một logical owner khi cần lập kế hoạch dài hạn:** long-lived application phải cho phép tìm được nguồn tiến độ hiện hành; ưu tiên GitHub Issues/Projects, backlog, `ROADMAP.md` hoặc status document **đã có và phù hợp**. Nguồn đó hoặc các link có thẩm quyền cần giúp tìm current priorities, relevant feature state, material blockers/dependencies, next action, evidence và deferred work khi cần; không bắt đủ mọi field, một bảng mọi feature hay copy issue/release log.
+
+`PROGRESS.md` **chỉ là fallback có điều kiện**, không tự tạo theo tên chuẩn. Chỉ đề xuất sau khi chứng minh **đồng thời**: (1) target là long-lived app; (2) chưa có progress owner phù hợp; (3) không thể cải thiện owner hiện có đơn giản hơn; (4) cần continuity qua phiên thật; (5) có owner và update triggers; (6) không trùng task-tracker authority; (7) claims đối chiếu được với evidence. Phải tuân thủ admission tạo tài liệu bên dưới và cần authorization riêng để tạo file trong target. Đối với repo không cần sustained app planning, dùng scope/issue hiện tại, không dựng status system mới.
+
+**Status integrity:** tracker/status nói công việc đang ở đâu, **không tự chứng minh** implementation; code ≠ verified; tests/verification ≠ product acceptance; Git publication ≠ deployment; deployment ≠ runtime health. Completion claim cần đúng source/evidence gắn với candidate, version/environment; stale hoặc mâu thuẫn → ghi discrepancy, đánh dấu chưa xác minh, không unsupported PASS. Chỉ cập nhật progress owner khi priority, accepted scope, implementation/verification, release, material blocker, owner hoặc deferred/retired capability **thực sự thay đổi**; đọc repo hay sửa lỗi thường không tự kích hoạt progress update. Git/CI/release records vẫn sở hữu lịch sử và bằng chứng riêng.
 
 **Không bắt buộc** thư mục `docs/`, `tasks/`, `reports/`, `plans/`, `decisions/`, 11 phase files, một spec mỗi endpoint, hay src/monorepo convention. Tài liệu hợp nhất nếu làm giảm số nơi phải cập nhật; giữ naming target đang dùng.
 
@@ -51,7 +57,18 @@ Không thêm YAML task/report/review, scripts, hooks, prompts catalog, skill mir
 
 Trước khi thêm hoặc sửa docs: tìm owner cũ → xác minh target truth và nguồn → sửa đúng assertion bị ảnh hưởng → kiểm link, acceptance và consumers → xóa duplicate cùng change. Khi behavior/API/operation thay đổi, cập nhật source liên quan **cùng thay đổi được authorized**; không snapshot toàn repo.
 
-Code reuse của target: colocate theo feature trước; extract shared chỉ khi semantics/invariants và owner khớp, không vì hai đoạn code giống nhau. Trước khi đổi shared/API/schema phải xác định **direct + transitive/indirect consumers**, compatibility và regression cần chạy. Dependency không xác định → mở rộng test hoặc báo NOT VERIFIED; không thêm generic utils, abstraction hay stack mới chỉ để “future-proof”.
+### Feature-oriented module boundaries — conditional application default
+
+**Feature-first** là mặc định có điều kiện cho application khi business capabilities đủ rõ; ưu tiên **modular monolith** nếu một deployment boundary đáp ứng requirements. Với app nhỏ, colocation đơn giản có thể đủ; giữ framework/target conventions, không bắt thư mục `features/`, refactor hiện hữu hay mô hình tổ chức cố định. Directory không tự xác định module: feature/module có ý nghĩa phải có responsibility, business invariants, owner của state/mutation rules, public/private boundary và verification phù hợp.
+
+- **Encapsulation/dependencies:** chi tiết internal không mặc nhiên là cross-feature API; không tùy tiện truy cập private state của module khác. Cho phép dependency hợp lệ, hướng phụ thuộc rõ và hợp lý; tránh circular imports/dependencies và uncontrolled shared mutable state. **Low coupling ≠ zero dependencies.**
+- **Contracts:** dùng stable public contracts khi consumer tiến hóa độc lập hoặc compatibility quan trọng; internal call có thể thay đổi atomically không cần interface machinery. Cross-feature collaboration cùng process có thể dùng direct calls; không mặc định event bus, ports/adapters, hexagonal layers hoặc one-service-per-feature.
+- **Data:** business state và mutations có logical owner; shared database và cross-feature transaction được phép khi cần correctness. Không ép database riêng, eventual consistency hay distributed transactions để đạt independence hình thức.
+- **Shared code:** colocate trước; extract shared business logic **chỉ khi** semantics, invariants và owner thực sự khớp, không vì code trông giống. Không tạo generic `utils/common` hoặc abstraction cho hypothetical reuse.
+- **Impact/verification:** trước đổi shared module/public API/schema tìm **direct + transitive/indirect consumers**, kiểm compatibility và regression theo blast radius. Dependency không xác định → kiểm rộng hơn hoặc báo **NOT VERIFIED**, không giả mọi consumer đều đã cover.
+- **Evolution:** chỉ tăng boundary discipline khi complexity/churn đòi hỏi; đo bottleneck và kiểm phương án nhỏ hơn trước khi tách runtime/service. Independent deployment/scale/isolation requirements mới là lý do cân nhắc microservices, không phải dự báo scale.
+
+Không yêu cầu one-spec-per-feature, module-local `AGENTS.md`, infrastructure mới hay architecture extraction cho tương lai giả định. ECC chỉ hỗ trợ HOW khi cần; target quyết định domain/contracts và giữ authority.
 
 ### Trust boundary và khả năng tái sử dụng giữa phiên
 

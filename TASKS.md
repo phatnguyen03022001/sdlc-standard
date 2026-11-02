@@ -24,6 +24,20 @@
 
 Một task có thể đi qua nhiều capability **tuần tự trong cùng phiên**; không tự tạo agent, hội đồng hoặc song song writer. DESIGN chỉ bắt buộc cho quyết định material chưa rõ, không chặn bug nhỏ đã có contract. Router chọn **cách làm**, không chọn quyền, scope hoặc người phê duyệt.
 
+### Target lifecycle orientation — adaptive, evidence-based
+
+Trước **material planning/architecture** hoặc handoff đáng kể, Architect xác định **trạng thái liên quan của target**, không gán một SDLC phase duy nhất cho cả ứng dụng: (a) product maturity và accepted decisions, (b) implementation/verification/acceptance của feature, (c) active workstream, (d) release readiness, (e) operational status. Các chiều độc lập: production vẫn có feature đang phát triển; code ≠ verified ≠ accepted ≠ released; deployed ≠ healthy. Dùng gates tại [SDLC.md](SDLC.md), không lặp 11 nhóm ở đây.
+
+**Chọn độ sâu theo risk/scope, không phải nghi thức chung:**
+
+- **MATERIAL** — product architecture, major feature, module boundary, security/data migration, release planning, large refactor hoặc significant handoff: bind đúng repo/branch/candidate và instructions; xác định outcome/workstream; đọc **chỉ** product decisions, feature contracts, tracker, code/tests, CI, release/telemetry **liên quan**; đối chiếu các gate đã hoàn tất với bằng chứng, tìm blockers/unresolved material decisions; chọn **gate còn thiếu nhỏ nhất**, next outcome, deferred/non-goals và ECC HOW thích hợp.
+- **LIGHT** — scoped feature/change/ordinary defect: xác minh owner, contract, candidate, affected consumers và focused verification; không khảo sát toàn bộ product maturity nếu không ảnh hưởng outcome.
+- **MINIMAL / INCIDENT-FOCUSED** — cosmetic/trivial changes hoặc production incident: tập trung đúng change/incident và evidence cần thiết, không trì hoãn remediation vì project-wide assessment. Authority, security/data và release gates áp dụng vẫn bắt buộc.
+
+**Nhãn cho lifecycle claim (không thay gate verdict hoặc test status):** `CONFIRMED` = đã kiểm nguồn có thẩm quyền và evidence phù hợp candidate/environment; `INFERRED` = suy luận có căn cứ nhưng chưa được chứng minh, ghi rõ giới hạn; `UNKNOWN` = thiếu, stale, mâu thuẫn hoặc không truy cập được evidence; `N/A` = không liên quan, có lý do. `UNKNOWN` về deployment/implementation **không** đồng nghĩa `NOT DEPLOYED`/`NOT IMPLEMENTED`; không tự khai PASS khi chưa xác minh. Requirement/acceptance cần product owner, code chứng minh implementation, tests chứng minh kiểm thử trên candidate, sign-off chứng minh acceptance, deploy record chứng minh release, telemetry mới chứng minh operational health.
+
+**Next-action selection:** material decision chưa chốt → resolve decision trước dependent implementation; design đã duyệt nhưng chưa code → vertical slice; code thiếu verification → verify affected behavior; verified thiếu acceptance → obtain applicable acceptance; accepted chưa release → release readiness; defect tái hiện được → focused fix; docs stale → cập nhật canonical owner bị ảnh hưởng. Không quay lại Discovery nếu chưa có bằng chứng cần xem lại product intent. Material handoff có thể nêu ngắn `Lifecycle: relevant product/feature state; confirmed gates; workstream; missing gate; blockers; next outcome; deferred; evidence refs`; không bắt template này cho task nhỏ, không tạo handoff file hay authority mới.
+
 ## 2. Handoff tối thiểu
 
 Giao **một outcome**, không giao “fix all” hoặc danh sách thay đổi tùy tiện. Có thể dẫn link đến spec/issue thay vì lặp lại:
