@@ -26,17 +26,25 @@ Một task có thể đi qua nhiều capability **tuần tự trong cùng phiên
 
 ### Target lifecycle orientation — adaptive, evidence-based
 
-Trước **material planning/architecture** hoặc handoff đáng kể, Architect xác định **trạng thái liên quan của target**, không gán một SDLC phase duy nhất cho cả ứng dụng: (a) product maturity và accepted decisions, (b) implementation/verification/acceptance của feature, (c) active workstream, (d) release readiness, (e) operational status. Các chiều độc lập: production vẫn có feature đang phát triển; code ≠ verified ≠ accepted ≠ released; deployed ≠ healthy. Dùng gates tại [SDLC.md](SDLC.md), không lặp 11 nhóm ở đây.
+**Góc nhìn thực thi hằng ngày: Understand → Change → Verify** — không phải lifecycle mới hoặc ba gate thay thế [SDLC.md](SDLC.md).
 
-**Chọn độ sâu theo risk/scope, không phải nghi thức chung:**
+- **Understand:** xác minh đúng target, outcome/acceptance, contracts, phạm vi, quyền và rủi ro **liên quan**; không lặp Discovery nếu product intent đã được chấp nhận.
+- **Change:** thực hiện thay đổi nhỏ nhất được phép, giữ business invariants, security và compatibility; quyết định material chưa chốt thì không viết code phụ thuộc.
+- **Verify:** kiểm acceptance, affected consumers, exact candidate/evidence và điều kiện hoàn tất áp dụng; tests PASS không tự chứng minh acceptance/release.
 
-- **MATERIAL** — product architecture, major feature, module boundary, security/data migration, release planning, large refactor hoặc significant handoff: bind đúng repo/branch/candidate và instructions; xác định outcome/workstream; đọc **chỉ** product decisions, feature contracts, tracker, code/tests, CI, release/telemetry **liên quan**; đối chiếu các gate đã hoàn tất với bằng chứng, tìm blockers/unresolved material decisions; chọn **gate còn thiếu nhỏ nhất**, next outcome, deferred/non-goals và ECC HOW thích hợp.
-- **LIGHT** — scoped feature/change/ordinary defect: xác minh owner, contract, candidate, affected consumers và focused verification; không khảo sát toàn bộ product maturity nếu không ảnh hưởng outcome.
-- **MINIMAL / INCIDENT-FOCUSED** — cosmetic/trivial changes hoặc production incident: tập trung đúng change/incident và evidence cần thiết, không trì hoãn remediation vì project-wide assessment. Authority, security/data và release gates áp dụng vẫn bắt buộc.
+**Độ sâu theo tác động, không phải checklist cố định:**
 
-**Nhãn cho lifecycle claim (không thay gate verdict hoặc test status):** `CONFIRMED` = đã kiểm nguồn có thẩm quyền và evidence phù hợp candidate/environment; `INFERRED` = suy luận có căn cứ nhưng chưa được chứng minh, ghi rõ giới hạn; `UNKNOWN` = thiếu, stale, mâu thuẫn hoặc không truy cập được evidence; `N/A` = không liên quan, có lý do. `UNKNOWN` về deployment/implementation **không** đồng nghĩa `NOT DEPLOYED`/`NOT IMPLEMENTED`; không tự khai PASS khi chưa xác minh. Requirement/acceptance cần product owner, code chứng minh implementation, tests chứng minh kiểm thử trên candidate, sign-off chứng minh acceptance, deploy record chứng minh release, telemetry mới chứng minh operational health.
+- **MINIMAL / INCIDENT-FOCUSED:** typo, cosmetic hoặc production incident → tập trung change/incident, xác minh theo phạm vi; không khảo sát toàn lifecycle.
+- **LIGHT:** bug/feature có contract rõ → target-native vertical slice, root cause, focused + affected regression.
+- **MATERIAL:** architecture, security/privacy, persistent data/migration, public API, major refactor, release/operations/retirement hoặc handoff đáng kể → xác minh các quyết định/gates **thực sự ảnh hưởng** (bao gồm material-design-readiness, approval, backup/recovery, independent review khi bắt buộc); chọn **gate còn thiếu nhỏ nhất** chặn outcome, không chạy lại gates đã chứng minh xong.
 
-**Next-action selection:** material decision chưa chốt → resolve decision trước dependent implementation; design đã duyệt nhưng chưa code → vertical slice; code thiếu verification → verify affected behavior; verified thiếu acceptance → obtain applicable acceptance; accepted chưa release → release readiness; defect tái hiện được → focused fix; docs stale → cập nhật canonical owner bị ảnh hưởng. Không quay lại Discovery nếu chưa có bằng chứng cần xem lại product intent. Material handoff có thể nêu ngắn `Lifecycle: relevant product/feature state; confirmed gates; workstream; missing gate; blockers; next outcome; deferred; evidence refs`; không bắt template này cho task nhỏ, không tạo handoff file hay authority mới.
+Ở mọi độ sâu, authorization, security/data, compatibility và release gates **áp dụng** vẫn bắt buộc; incident khẩn cấp không tự cấp quyền deploy.
+
+Khi **material planning hoặc handoff** cần định hướng, chỉ đọc evidence có liên quan cho năm chiều **độc lập**: (a) product maturity và accepted decisions, (b) feature implementation / verification / acceptance, (c) active workstream, (d) release readiness, (e) operational status. Production app vẫn có feature đang phát triển; code ≠ verified ≠ accepted ≠ released; deployed ≠ healthy. Không bắt báo đủ năm chiều ở mọi task. Các gate và tám trục chất lượng thuộc [SDLC.md](SDLC.md).
+
+**Nhãn cho lifecycle claim, không phải gate verdict hoặc test status:** `CONFIRMED` = nguồn có thẩm quyền với evidence phù hợp candidate/environment; `INFERRED` = suy luận có căn cứ, nêu giới hạn; `UNKNOWN` = thiếu/stale/mâu thuẫn/không truy cập được; `N/A` = không liên quan, có lý do. `UNKNOWN` không đồng nghĩa `NOT DEPLOYED` hoặc `NOT IMPLEMENTED`. Product owner quyết định requirement/acceptance, code chứng minh implementation, tests chứng minh kiểm thử, sign-off chứng minh acceptance, deploy record chứng minh release, telemetry mới chứng minh health.
+
+**Next action:** decision chưa chốt → điều tra/chốt trước dependent code; accepted design → vertical slice; code chưa verify → relevant verification; verified chưa accepted → acceptance; accepted chưa release → release gate; incident/defect → khắc phục trọng điểm. Material handoff có thể ghi ngắn relevant state, evidence, blocker, next gate và deferred work theo mục 2; task nhỏ không cần template.
 
 ## 2. Handoff tối thiểu
 
@@ -111,31 +119,21 @@ Unrelated dirty state có thể cùng tồn tại với `VERIFIED`, `COMMITTED_L
 
 **Cross-session continuation.** Handoff gốc + actual target/ref/HEAD, authorized scope, changed paths/dirty state, candidate-bound checks và kết quả, unpublished commit range khi liên quan, unresolved effect/locator và next authorized action; phiên sau tự rebind state/authority trước khi tiếp tục. Escalate khi identity/permission sai, conflicting requirements, material impact chưa rõ, security/data risk, irrecoverable migration, mandatory independent review hoặc verification chưa đủ; không tự cấp quyền.
 
-## 4. ECC — tận dụng tối đa, không sao chép framework
+## 4. ECC — HOW có điều kiện, ưu tiên target-native
 
-**ECC = HOW** (investigate/design, implementation, TDD, testing, review, debugging, deployment). Target = product/engineering truth; SDLC = required outcome/gates; [REPOSITORY.md](REPOSITORY.md) = knowledge ownership. ECC **không cấp quyền**, không vượt target instructions, và skills/hook dành riêng Claude Code **không tự chạy** trong ChatGPT/Codex.
+**Thứ tự ưu tiên về authority/applicability, không phải pipeline bắt buộc:** target requirements và restrictions → target-native conventions/code/tooling → phương pháp kỹ thuật phù hợp → **ECC khi hữu ích** → target-native verification. Target sở hữu product/engineering truth; [SDLC.md](SDLC.md) sở hữu outcomes/gates; ECC bổ sung specialized HOW, **không cấp quyền, không thay contract hoặc native tooling**.
 
-**Luồng:** Intent → Target truth → ECC discovery → Revision verification → Applicability → Selective HOW → Target verification.
+**Kích hoạt theo nhu cầu thực tế:**
 
-1. Xác minh **ECC source/skill thực sự tồn tại ở exact commit revision** đang sử dụng; checkout workspace có thể khác revision Foundation tham chiếu, không hardcode Foundation pin hoặc suy đoán đã installed/activated. Nếu checkout có thay đổi local, commit SHA một mình không định danh nội dung thực đang đọc; đối chiếu content identity hoặc không coi là pinned.
-2. Chọn **1–2 skills ban đầu** đúng intent thay vì đọc cả catalog; nạp thêm theo risk/gate thực tế, không đặt trần 2 skills cho cả task hoặc lấy số skill làm KPI.
-3. Với mỗi skill thực sự dùng, xác định `name/source@revision → applicable sections → adopted/skipped guidance (lý do nếu khác biệt material) → target-native verification`; chỉ ghi đủ để truy xuất khi cần, không ép metadata cho task nhỏ đã rõ. Dùng commands/tests của target và điều chỉnh cho ChatGPT/Codex.
-4. Bỏ qua hướng dẫn không tương thích với target, authority hoặc harness (Claude hooks/orchestration, global config, coverage threshold không thuộc target policy, approvals thừa, dependency/infra mới không có nhu cầu); không tự tải/cài/nâng cấp hay đánh dấu ECC PASS khi thiếu evidence.
+- **Trivial / routine:** typo, formatting, config nhỏ với contract rõ → làm theo native workflow và focused checks; **không bắt ECC discovery**.
+- **Ordinary:** bug cô lập, cải tiến nhỏ, feature có accepted requirements → native workflow, root cause và affected regression; chỉ đọc ECC nếu cải thiện rõ reasoning, implementation hoặc verification.
+- **Material / specialized:** architecture, security boundary, migration, cross-module contract, complex reliability/refactor → **chọn ECC methodology liên quan khi có và áp dụng được**; không nạp toàn catalog. Task nhỏ vẫn có thể dùng ECC khi có capability gap/rủi ro thật.
 
-**Map ECC theo tình huống — tra tên trong checkout thật, không tự kích hoạt:**
+ECC có thể hữu ích cho clarification, change-impact, module/contract design, security, debugging, testing, verification hoặc documentation integrity; **không bắt mọi task chọn skill**. Bắt đầu 1–2 skills là *heuristic* khi đã quyết định dùng ECC, **không phải quota/hard cap**; nạp thêm khi risk/capability đòi hỏi.
 
-| Tình huống | ECC HOW tham khảo |
-| --- | --- |
-| Product intent/feature boundary chưa rõ | `intent-driven-development`, `product-capability` |
-| Feature/change/defect thực thi | `orch-add-feature`, `orch-change-feature`, `orch-fix-defect` — chọn **một** đúng intent |
-| Shared API/event/consumer thay đổi | `contract-first` |
-| Code/tests và hồi quy | `tdd-workflow`, `verification-loop` — dùng phần phù hợp stack/test thật |
-| Auth/trust/secrets/production risk | `security-review`, `production-audit` khi impact cần |
-| Docs/knowledge drift | `living-docs-governance` |
+**Chỉ khi thực sự dùng ECC:** xác minh skill tồn tại, `name/source@revision` hoặc content identity phù hợp (checkout có thể khác Foundation pin; dirty thì SHA không đủ); đọc **phần áp dụng**, ghi provenance/adopted hoặc material skipped guidance khi cần truy xuất; bỏ qua Claude-only hooks/orchestration/config, schema đầu ra/coverage threshold không thuộc target policy và ví dụ không tương thích; chuyển HOW sang commands/conventions của target và kiểm kết quả thực. Không coi skill hay metadata là proof of PASS.
 
-**Priority HOW:** target-native commands/conventions → ECC skill đúng revision → bổ sung kỹ thuật khác **chỉ khi** ECC thiếu capability cần thiết, có bằng chứng và được phép. ECC HOW có thể đề xuất thêm file/tool/approval; chỉ nhận khi đáp ứng scope và admission của [REPOSITORY.md](REPOSITORY.md). Không cài hook/agent, không dùng cron, tự động hóa hay subprocess chỉ vì một ví dụ ECC.
-
-Không thêm abstraction/dependency/infrastructure chỉ vì ECC có skill. Dùng capability cần thiết với context tối thiểu; hiệu quả được đánh giá bằng **đúng task + regression + security + cost**, không phải số lượng skill.
+Nếu ECC không truy cập được mà không có **yêu cầu cụ thể bắt buộc** sử dụng capability đó, tiếp tục với engineering practices và target-native checks, **không khai đã dùng ECC**, không clone/cài đặt chỉ để qua quy trình. Nếu task bắt buộc capability không thể truy cập hoặc thay thế phù hợp, báo blocker thật. Không tự kích hoạt skill cho mọi task, đếm số skill làm KPI, nạp full catalog, cài Claude hooks/agents, sinh file, thêm dependency/infra/automation chỉ vì skill đề xuất; mọi thay đổi vẫn cần scope, authority và admission theo [REPOSITORY.md](REPOSITORY.md).
 
 ## 5. Verification, review, report
 

@@ -13,7 +13,7 @@ Chuẩn Markdown gọn cho phát triển sản phẩm với **ChatGPT Architect 
 
 1. **Bind target:** xác minh đúng repo/branch/HEAD, instructions và trạng thái local; target sở hữu sự thật sản phẩm.
 2. **Architect:** phân loại intent (READ_ONLY/DESIGN/IMPLEMENT/REVIEW/SECURITY/RELEASE), chọn outcome/gate trong [SDLC.md](SDLC.md), chốt material decisions khi cần, root cause, trade-off, phạm vi nhỏ nhất và acceptance; giao task theo [TASKS.md](TASKS.md).
-3. **Executor:** dùng **ChatGPT nếu phiên có công cụ truy cập/thực thi**, hoặc **Codex** khi cần làm trực tiếp trên workspace. Chỉ nạp context và [ECC](https://github.com/affaan-m/everything-claude-code) skill phù hợp, không cài/copy toàn bộ ECC.
+3. **Executor:** dùng **ChatGPT nếu phiên có công cụ truy cập/thực thi**, hoặc **Codex** khi cần làm trực tiếp trên workspace. Ưu tiên target-native workflow; chỉ tham khảo [ECC](https://github.com/affaan-m/everything-claude-code) skill khi có ích, không cài/copy toàn bộ ECC.
 4. **Verify:** tests theo blast radius, kiểm diff và bằng chứng. Phân biệt kiểm tra bản thân với independent review.
 5. **Publish khi được phép riêng:** chỉnh sửa không tự cấp quyền commit/push/deploy. Không có tool/evidence thì báo **NOT VERIFIED**, không giả PASS.
 
