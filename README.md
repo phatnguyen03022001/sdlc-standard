@@ -1,11 +1,11 @@
 # SDLC Standard — Agent-ready Mini
 
-Chuẩn Markdown gọn cho phát triển sản phẩm với **ChatGPT Architect → ChatGPT hoặc Codex Executor**. Kết hợp vòng đời SDLC, quyền thực thi an toàn và ECC chuyên trách **HOW**; không phải agent runtime, bộ cài, chứng nhận ISO hay cơ chế tự động cấp quyền.
+Chuẩn Markdown gọn cho phát triển sản phẩm với **ChatGPT Architect → Chat/Work/Codex Executor**. Kết hợp vòng đời SDLC, quyền thực thi an toàn và [Engineering Skills](https://github.com/phatnguyen03022001/engineering-skills) chuyên trách **HOW** (ECC là upstream/reference tùy chọn); không phải agent runtime, bộ cài, chứng nhận ISO hay cơ chế tự động cấp quyền.
 
 | Nguồn duy nhất | Sở hữu |
 | --- | --- |
 | [SDLC.md](SDLC.md) | 11 nhóm lifecycle, 8 trục chất lượng, quality/release gates |
-| [TASKS.md](TASKS.md) | ChatGPT Architect → ChatGPT/Codex, capability routing, material design gate, handoff, authority, continuity, ECC HOW |
+| [TASKS.md](TASKS.md) | Architect → Chat/Work/Codex, environment/mode routing, conditional Agent Team, session handoff, authority, Git/evidence, Skills/ECC tham khảo |
 | [REPOSITORY.md](REPOSITORY.md) | Ownership, tài liệu tối thiểu, chống rác/drift |
 | [research/README.md](research/README.md) | Nghiên cứu tham khảo, không tự thành quyết định áp dụng |
 
@@ -13,7 +13,7 @@ Chuẩn Markdown gọn cho phát triển sản phẩm với **ChatGPT Architect 
 
 1. **Bind target:** xác minh đúng repo/branch/HEAD, instructions và trạng thái local; target sở hữu sự thật sản phẩm.
 2. **Architect:** phân loại intent (READ_ONLY/DESIGN/IMPLEMENT/REVIEW/SECURITY/RELEASE), chọn outcome/gate trong [SDLC.md](SDLC.md), chốt material decisions khi cần, root cause, trade-off, phạm vi nhỏ nhất và acceptance; giao task theo [TASKS.md](TASKS.md).
-3. **Executor:** dùng **ChatGPT nếu phiên có công cụ truy cập/thực thi**, hoặc **Codex** khi cần làm trực tiếp trên workspace. Ưu tiên target-native workflow; chỉ tham khảo [ECC](https://github.com/affaan-m/everything-claude-code) skill khi có ích, không cài/copy toàn bộ ECC.
+3. **Executor:** chọn Chat/Work/Codex theo workload, tool/quyền thực có; Codex ưu tiên cho native repo work. Single Agent mặc định; Agent Team chỉ khi qua admission trong [TASKS.md](TASKS.md). Ưu tiên target-native workflow, dùng Engineering Skills khi hữu ích; [ECC](https://github.com/affaan-m/everything-claude-code) chỉ là reference, không bắt cài plugin.
 4. **Verify:** tests theo blast radius, kiểm diff và bằng chứng. Phân biệt kiểm tra bản thân với independent review.
 5. **Publish khi được phép riêng:** chỉnh sửa không tự cấp quyền commit/push/deploy. Không có tool/evidence thì báo **NOT VERIFIED**, không giả PASS.
 

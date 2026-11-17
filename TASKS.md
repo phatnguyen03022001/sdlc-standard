@@ -9,7 +9,9 @@
 - **Reviewer độc lập:** phiên/actor thực sự khác, chỉ kích hoạt khi risk, policy hoặc owner yêu cầu. Self-review/diff check của executor **không phải** independent review.
 - **Một phiên có thể thiết kế → sửa → kiểm chứng** với task nhỏ đủ rõ. Architect → Executor là mô hình ưu tiên cho handoff có chủ đích, **không phải hai agent bắt buộc**.
 
-**Routing theo công việc, không hardcode model:** XS/S rõ contract → executor trực tiếp; M → vertical slice với acceptance; L/XL hoặc nhiều bất định → Architect investigation/read-only, chốt boundary rồi chia slice khi có lợi. Tăng reasoning effort/chọn model mạnh hơn **chỉ khi** chất lượng đo được hoặc rủi ro cần; trước đó sửa context, tools và task scope. So sánh **chi phí hoàn thành đã verify** = tokens + retries + review + thời gian + runtime, không chỉ giá token. Không hứa đạt một “giới hạn trần” tuyệt đối: đo quality/latency/cost trên task thực.
+**Model mặc định (không phải bằng chứng runtime):** Architect dùng GPT-6, ưu tiên `high` cho quyết định material/phức tạp; Main Executor dùng GPT-6 `high`, chịu trách nhiệm tích hợp/verification/báo cáo. Chỉ khi Agent Team được duyệt và capability thực sự hỗ trợ mới dùng GPT-6 Luna với effort `high` làm subagent. Kiểm model ID/effort thực tế nếu runtime cung cấp; prompt tự khai model không phải proof. **Không âm thầm thay model**; nếu không đáp ứng được yêu cầu bắt buộc, fallback Single Agent chỉ khi vẫn đủ evidence/authority, nếu không `BLOCKED`.
+
+**Routing theo công việc, không hardcode surface:** XS/S rõ contract → executor trực tiếp; M → vertical slice với acceptance; L/XL hoặc nhiều bất định → Architect investigation/read-only, chốt boundary rồi chia slice khi có lợi. Tăng reasoning effort/chọn model mạnh hơn **chỉ khi** chất lượng đo được hoặc rủi ro cần; trước đó sửa context, tools và task scope. So sánh **chi phí hoàn thành đã verify** = tokens + retries + review + thời gian + runtime, không chỉ giá token. Không hứa đạt một “giới hạn trần” tuyệt đối: đo quality/latency/cost trên task thực.
 
 ### Định tuyến capability (logic trong Markdown, không tạo router/runtime)
 
@@ -54,6 +56,8 @@ Khi **material planning hoặc handoff** cần định hướng, chỉ đọc ev
 - **Boundary:** scope, non-goals và quyền operator cấp riêng cho từng hành động (`READ | EDIT | COMMIT | PUSH | RELEASE`); capability/ECC không tự cấp quyền.
 - **Proof:** cách verify, evidence cần thu thập, các failure paths liên quan và điều kiện stop/escalate.
 
+**Session bắt buộc trong mọi handoff Architect → Executor:** khai `Session: NEW CHAT | CONTINUE CHAT` **kèm một lý do ngắn**. Ưu tiên `CONTINUE CHAT` cho cùng task, correction, task kế tiếp gắn chặt hoặc accepted context còn hữu ích và không cần independence. Ưu tiên `NEW CHAT` cho workstream không liên quan, independent review, context mâu thuẫn/không đáng tin, môi trường mới cần tách biệt hoặc không thể khôi phục continuity. **Không đổi chat chỉ vì dài**; chat mới không tự chứng minh reviewer independence. Cả hai chế độ phải rebind target/source, candidate, authority, environment/capabilities và pending effects trước consequential action; không tạo session ledger/file.
+
 Có thể trỏ tới spec/issue và instructions đã có thay vì chép lại. **Chỉ bổ sung khi liên quan:** exact baseline/candidate; material architecture decision và owner; governing source/revision cho handoff qua phiên; security/data migration; direct/transitive affected consumers; rollback/recovery; release permission; mandatory independent review; hoặc original operation identity/postcondition khi outcome chưa rõ. Không lược bỏ thông tin critical để vừa ba nhóm; việc bàn giao không thay thế authority hay [Git synchronization](#git-synchronization--canonical-execution-contract).
 
 **Binding và acceptance:** nếu cần pin governance qua phiên, xác minh nguồn thực sự áp dụng; commit SHA không định danh thay đổi local chưa commit, cần content/diff identity tương ứng. Nguồn stale/không kiểm được → rebind hoặc `NOT VERIFIED`; quyết định material `UNRESOLVED` không được đổi thành `N/A`. Acceptance mô tả **điều kiện → thao tác → kết quả, điều không được xảy ra → cách chứng minh**. Khi root cause chưa rõ, điều tra có giới hạn trước mutation. Giao một vertical slice đủ kiểm chứng, không mặc định chia FE/BE/DB; Architect phải xem lại quyết định material trước khi mở rộng business/architecture scope.
@@ -91,9 +95,29 @@ Công việc cơ học, đảo ngược dễ và đã có contract rõ **không 
 | Push | **Quyền push rõ ràng**, xác minh remote ref mới, fast-forward/ancestry an toàn và xác nhận kết quả published |
 | Deploy/release/destructive/force | **Quyền riêng cho thao tác cụ thể** cùng safety, rollback, approvals trong target |
 
-### Execution surface — ChatGPT và Codex
+### Execution environment, surface & capability
 
-Codex ưu tiên filesystem, terminal/Git CLI và verification commands native khi có. ChatGPT dùng native hoặc connected execution tools thực sự có trong phiên và được cấp quyền; không giả định có filesystem/terminal. **MCP không bắt buộc**; không cài/configure MCP hoặc thêm abstraction chỉ để thực thi. Transport không phải architecture authority; capability sẵn có không cấp quyền.
+**Workload routing (preference, không phải capability guarantee):** Chat cho architecture/requirements/decisions; Work cho research/investigation nhiều nguồn; Codex native cho implement/debug/test trên repo; separate Architect/reviewer session cho acceptance độc lập khi bắt buộc; macOS có toolchain phù hợp cho Apple-native verification. Chat vẫn có thể execute khi thực sự có tool và quyền; Work/Codex có môi trường, filesystem và quyền khác nhau, **không coi hoán đổi tự động**. **Không mặc định Chat hỗ trợ native Agent Teams.** MCP không bắt buộc; không cài/configure MCP hay tạo runtime chỉ để chọn mode.
+
+**Capability evidence:** phân biệt `DOCUMENTED` (có mô tả chính thức), `VERIFIED` (đã quan sát trong đúng phiên/môi trường), `UNSUPPORTED` (bị hạn chế rõ), `UNKNOWN` (chưa xác minh). Documentation, tên mode, prompt hoặc plugin đã cài **không chứng minh capability hoạt động**. Trước thao tác cần tool đặc thù, xác minh tool, permission và proof path đang có; nếu mất capability giữa chừng, kiểm lại effect/identity trước khi fallback hoặc retry theo [unknown effects](#git-synchronization--canonical-execution-contract).
+
+| Môi trường thực tế | Path/fallback an toàn | Evidence/boundary và điểm dừng |
+| --- | --- | --- |
+| **Mac + GitHub** | Ưu tiên native execution trên đúng working copy, GitHub là published truth; dùng Chat/Work/Codex theo task và tool thực tế. | Quan sát origin/HEAD, index/worktree, toolchain, checks và fresh remote; `SYNCED_CLEAN` chỉ theo Git contract bên dưới. |
+| **Chỉ GitHub, Mac không truy cập được** | Dùng authorized GitHub connector/API cho scoped source edit/publication và checks khả dụng; không giả native testing. | Fresh remote/commit + diff/checks; tối đa `PUBLISHED`, local Mac `NOT OBSERVED`; native-required AC thiếu → `PARTIAL`/`BLOCKED`. |
+| **Có Mac nhưng thiếu tool/permission native** | Dùng surface được phép khác **chỉ khi** chứng minh cùng contract/acceptance; không tự cài/upgrade hoặc bỏ test bắt buộc. | Ghi tool/permission thiếu, checks chưa chạy; native-only verification không thay bằng static review → `BLOCKED` phần phụ thuộc. |
+| **Local ≠ remote (dirty/ahead/diverged)** | Áp dụng **duy nhất** [Git synchronization](#git-synchronization--canonical-execution-contract); không tự pull/merge/reset hoặc publish unrelated work. | Fresh HEAD/ancestry, index/worktree, overlap; reconciliation thiếu safety evidence → `BLOCKED` sync, scoped độc lập có thể tiếp tục. |
+| **Tool/mode mất capability giữa task** | Dừng thao tác phụ thuộc, kiểm effect đã xảy ra và quyền hiện hành; chỉ đổi surface khi equivalent proof và authorization còn đủ. | Unknown effect → `BLOCKED` dependent operations; không blind retry hoặc suy ra thành công từ timeout. |
+
+### Conditional Agent Team — admission & authority (không phải orchestration HOW)
+
+**Single Agent là mặc định.** Chỉ admit Agent Team nếu **đủ cả tám điều kiện**: (1) lợi ích delegation material; (2) Architect/Owner cho phép; (3) Main có đúng operation authority; (4) runtime đã chứng minh hỗ trợ delegation cần dùng; (5) GPT-6 Luna `high` thực sự khả dụng; (6) context/tools/permission đủ và phù hợp; (7) mỗi worker có scope/output bounded; (8) Main có thể integrate và verify kết quả. Không đạt → Single Agent nếu vẫn đáp ứng acceptance; nếu task bắt buộc team/evidence không thay thế được → `BLOCKED` trước khi spawn.
+
+**Main Executor (GPT-6 High) là single writer**: giữ toàn bộ quyền quyết định thao tác trong operator grant, integration, candidate checks, commit/push khi được cấp quyền và final reporting. Luna High subagents chỉ làm bounded **read-only** research/review mặc định; không nested delegation, không tự write/commit/push/deploy, không thừa hưởng quyền mới từ tool/skill/parent. Shared context/filesystem **không** chứng minh security hoặc reviewer independence. Không fanout tự động; concurrency/retry phải có giới hạn theo resource/risk của task, không retry mù khi timeout/effect chưa rõ. Worker fail/timeout → Main ghi partial evidence, kiểm effect, chỉ retry khi an toàn; fallback single-agent hoặc stop theo AC.
+
+**Evidence tối thiểu nếu thực sự dùng team:** runtime/mode, observed model ID + effort nếu exposed (nếu không: `NOT VERIFIED`), worker scope/permission, input và output identity, timeout/failure, Main integration và independently verified checks. Team review không tự thành independent acceptance; mandatory reviewer phải thực sự độc lập. Chỉ có tài liệu/pattern/installed plugin **không** phải runtime activation proof.
+
+**Tám pattern ứng viên (chọn khi có lợi, không mặc định triển khai):** Sequential Pipeline; Specialist Routing; Parallel Investigation; Map-Reduce; Orchestrator–Workers; Maker–Checker; Adversarial Review; Evaluator–Optimizer. Năm family: Sequential, Routing, Parallel, Orchestrator–Workers, Maker–Checker; Map-Reduce/Adversarial Review là variants, Evaluator–Optimizer là extension có điều kiện. **Pattern HOW** thuộc [Engineering Skills](https://github.com/phatnguyen03022001/engineering-skills), không định nghĩa orchestration algorithm tại SDLC.
 
 ### Git synchronization — canonical execution contract
 
@@ -127,17 +151,17 @@ Unrelated dirty state có thể cùng tồn tại với `VERIFIED`, `COMMITTED_L
 
 **Cross-session continuation.** Handoff gốc + actual target/ref/HEAD, authorized scope, changed paths/dirty state, candidate-bound checks và kết quả, unpublished commit range khi liên quan, unresolved effect/locator và next authorized action; phiên sau tự rebind state/authority trước khi tiếp tục. Escalate khi identity/permission sai, conflicting requirements, material impact chưa rõ, security/data risk, irrecoverable migration, mandatory independent review hoặc verification chưa đủ; không tự cấp quyền.
 
-## 4. ECC — HOW có điều kiện, ưu tiên target-native
+## 4. Engineering Skills & ECC — HOW có điều kiện, ưu tiên target-native
 
-**Thứ tự ưu tiên về authority/applicability, không phải pipeline bắt buộc:** target requirements và restrictions → target-native conventions/code/tooling → phương pháp kỹ thuật phù hợp → **ECC khi hữu ích** → target-native verification. Target sở hữu product/engineering truth; [SDLC.md](SDLC.md) sở hữu outcomes/gates; ECC bổ sung specialized HOW, **không cấp quyền, không thay contract hoặc native tooling**.
+**Thứ tự ưu tiên về authority/applicability, không phải pipeline bắt buộc:** target requirements/restrictions → target-native conventions/code/tooling → [Engineering Skills](https://github.com/phatnguyen03022001/engineering-skills) cho engineering HOW nếu phù hợp/khả dụng → ECC upstream/reference tùy chọn → target-native verification. Target sở hữu product/implementation truth; [SDLC.md](SDLC.md) sở hữu lifecycle/gates; tài liệu này sở hữu execution authority/delegation/session governance. Skills, installed plugins, ECC và tool availability **không cấp quyền hoặc chứng minh activation**. Không bắt cài plugin hoặc áp dụng pattern HOW để SDLC hoạt động.
 
 **Kích hoạt theo nhu cầu thực tế:**
 
 - **Trivial / routine:** typo, formatting, config nhỏ với contract rõ → làm theo native workflow và focused checks; **không bắt ECC discovery**.
-- **Ordinary:** bug cô lập, cải tiến nhỏ, feature có accepted requirements → native workflow, root cause và affected regression; chỉ đọc ECC nếu cải thiện rõ reasoning, implementation hoặc verification.
-- **Material / specialized:** architecture, security boundary, migration, cross-module contract, complex reliability/refactor → **chọn ECC methodology liên quan khi có và áp dụng được**; không nạp toàn catalog. Task nhỏ vẫn có thể dùng ECC khi có capability gap/rủi ro thật.
+- **Ordinary:** bug cô lập, cải tiến nhỏ, feature có accepted requirements → native workflow, root cause và affected regression; chỉ đọc Engineering Skills/ECC nếu cải thiện rõ reasoning, implementation hoặc verification.
+- **Material / specialized:** architecture, security boundary, migration, cross-module contract, complex reliability/refactor → **chọn Engineering Skills phù hợp hoặc ECC reference khi có và áp dụng được**; không nạp toàn catalog. Task nhỏ vẫn có thể dùng ECC khi có capability gap/rủi ro thật.
 
-ECC có thể hữu ích cho clarification, change-impact, module/contract design, security, debugging, testing, verification hoặc documentation integrity; **không bắt mọi task chọn skill**. Bắt đầu 1–2 skills là *heuristic* khi đã quyết định dùng ECC, **không phải quota/hard cap**; nạp thêm khi risk/capability đòi hỏi.
+Engineering Skills và ECC tham khảo có thể hữu ích cho clarification, change-impact, module/contract design, security, debugging, testing, verification hoặc documentation integrity; **không bắt mọi task chọn skill**. Bắt đầu 1–2 skills là *heuristic* khi đã quyết định dùng ECC, **không phải quota/hard cap**; nạp thêm khi risk/capability đòi hỏi.
 
 **Chỉ khi thực sự dùng ECC:** xác minh skill tồn tại, `name/source@revision` hoặc content identity phù hợp (checkout có thể khác Foundation pin; dirty thì SHA không đủ); đọc **phần áp dụng**, ghi provenance/adopted hoặc material skipped guidance khi cần truy xuất; bỏ qua Claude-only hooks/orchestration/config, schema đầu ra/coverage threshold không thuộc target policy và ví dụ không tương thích; chuyển HOW sang commands/conventions của target và kiểm kết quả thực. Không coi skill hay metadata là proof of PASS.
 
